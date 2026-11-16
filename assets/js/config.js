@@ -10,6 +10,6 @@ export const EVENTO = {
   data: '06 de dezembro de 2026',
   local: 'Nova Olinda do Norte – AM',
   endereco: 'A definir',
-  horario: 'A definir',
-  whatsapp: '', // ex.: '5592999999999'
+  horario: '9h',
+  whatsapp: '5592984759059', // (92) 98475-9059
 };

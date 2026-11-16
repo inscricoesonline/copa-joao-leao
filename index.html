@@ -29,6 +29,7 @@
   <span class="faixa-verm">GI / NO-GI</span>
   <div class="infos">
     <div>📅 <span>06 de dezembro de 2026</span></div>
+    <div>🕘 <span>Início às 9h</span></div>
     <div>📍 <span>Nova Olinda do Norte – AM</span></div>
   </div>
   <div class="acoes">
@@ -46,6 +47,7 @@
     <div><span>Absoluto</span><b>+ R$ 20</b></div>
   </div>
   <p class="nota">Valor por atleta, em cada modalidade. O Absoluto é para quem tem 16 anos ou mais e já está inscrito no peso. Pagamento por PIX na hora: a vaga só vale depois de pago. Pais ou responsáveis inscrevem os menores, e dá para inscrever vários atletas num PIX só.</p>
+  <p class="nota">Dúvidas sobre inscrição? Fale com a organização pelo WhatsApp <a href="https://wa.me/5592984759059" target="_blank" rel="noopener">(92) 98475-9059</a>.</p>
 </div></section>
 
 <section class="alt"><div class="wrap">
@@ -53,7 +55,7 @@
   <ol class="linha-tempo">
     <li><b>Até 2 de dezembro</b><span>Inscrições abertas. A chave aparece como prévia e muda a cada inscrição paga.</span></li>
     <li><b>3 de dezembro</b><span>Chave oficial publicada aqui no site.</span></li>
-    <li><b>6 de dezembro</b><span>Dia do campeonato, com resultados ao vivo dos 2 tatames.</span></li>
+    <li><b>6 de dezembro</b><span>Dia do campeonato, a partir das 9h, com resultados ao vivo dos 2 tatames.</span></li>
   </ol>
 </div></section>
 
@@ -142,7 +144,7 @@ document.getElementById('tabTempos').innerHTML = '<tr><th>Divisão</th><th>Faixa
     const txt = tempos.length === 1 ? `${tempos[0]} min` : fx.map(f => `${NOME_FAIXA[f]} ${TEMPO_LUTA_MIN(d.id, f)}`).join(' · ') + ' min';
     return `<tr><td>${d.nome}</td><td>${fx.map(f => NOME_FAIXA[f]).join(', ')}</td><td>${txt}</td></tr>`;
   }).join('');
-if (EVENTO.whatsapp) document.getElementById('contato').innerHTML = `Dúvidas: <a href="https://wa.me/${EVENTO.whatsapp}">WhatsApp da organização</a>`;
+if (EVENTO.whatsapp) document.getElementById('contato').innerHTML = `Dúvidas: <a href="https://wa.me/${EVENTO.whatsapp}" target="_blank" rel="noopener">WhatsApp da organização (92) 98475-9059</a>`;
 </script>
 </body>
 </html>
