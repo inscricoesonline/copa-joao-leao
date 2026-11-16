@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel · III Copa João Leão</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/leao.webp">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tema.css?v=6">
+<style id="cssChave"></style>
+<style>
+  .barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+  .barra input, .barra select { width: auto; flex: 1 1 160px; }
+  td.acoes { display: flex; gap: 6px; flex-wrap: wrap; white-space: normal; }
+  td { vertical-align: top; }
+  .mini { font-size: .8rem; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--linha); background: var(--preto3); color: var(--branco); cursor: pointer; min-height: 34px; }
+  .mini.verm { background: var(--vermelho); border-color: var(--vermelho); }
+  .mini.ouro { background: var(--dourado); color: #111; border-color: var(--dourado); }
+  dialog { background: var(--preto2); color: var(--branco); border: 1px solid var(--linha); border-radius: 12px; width: min(560px, 94vw); padding: 18px; }
+  dialog::backdrop { background: rgba(0,0,0,.7); }
+  .kpis { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .kpi { background: var(--preto2); border: 1px solid var(--linha); border-radius: 10px; padding: 14px; }
+  .kpi b { display: block; font-family: var(--titulo); font-size: 2rem; color: var(--dourado); }
+  .selo.pix { background: #0a5; border: 0; } .selo.dinheiro { background: #2a6fd6; border: 0; } .selo.abonado { background: #8a3fd1; border: 0; }
+  .selo.pendente { background: #555; border: 0; } .selo.cancelada { background: #600; border: 0; } .selo.pago_fora_prazo { background: var(--dourado); color: #111; border: 0; }
+</style>
+</head>
+<body>
+<header class="topo"><div class="wrap">
+  <img src="assets/img/brutus-branco.png" alt="Brutus" width="68" height="30">
+  <strong style="font-family:var(--titulo);font-style:italic">PAINEL</strong>
+  <nav><a href="chaves.html" target="_blank">Ver site</a><a href="mesario.html">Mesário</a><a href="#" id="sair" class="oculto">Sair</a></nav>
+</div></header>
+
+<main class="wrap" style="padding-bottom:60px">
+  <form id="login" class="passo" style="max-width:380px;margin:40px auto">
+    <h2>Entrar</h2>
+    <label>E-mail</label><input id="lEmail" type="email" autocomplete="username" required>
+    <label>Senha</label><input id="lSenha" type="password" autocomplete="current-password" required>
+    <p class="erro" id="lErro"></p>
+    <button class="btn"><span>Entrar</span></button>
+  </form>
+
+  <div id="app" class="oculto">
+    <p id="faseAtual" style="margin-top:16px"></p>
+    <div class="abas" id="abas">
+      <button data-aba="insc" aria-pressed="true">Inscrições</button>
+      <button data-aba="resumo" aria-pressed="false">Resumo</button>
+      <button data-aba="acad" aria-pressed="false">Academias</button>
+      <button data-aba="cats" aria-pressed="false">Categorias</button>
+      <button data-aba="chaves" aria-pressed="false">Chaves e fases</button>
+    </div>
+
+    <section id="insc" class="aba" style="padding:0">
+      <div class="barra">
+        <input id="iBusca" placeholder="Buscar atleta ou responsável">
+        <select id="iStatus"><option value="">Todos os status</option><option value="confirmada">Confirmadas</option><option value="pendente">Aguardando pagamento</option><option value="pago_fora_prazo">Pago fora do prazo</option><option value="cancelada">Canceladas</option></select>
+        <select id="iForma"><option value="">Todas as formas</option><option value="pix">PIX</option><option value="dinheiro">Dinheiro</option><option value="abonado">Abonado</option></select>
+        <button class="btn pequeno" id="novo"><span>+ Cadastrar atleta</span></button>
+        <button class="btn pequeno fantasma" id="csv"><span>Baixar planilha</span></button>
+      </div>
+      <p class="muted" id="iConta"></p>
+      <div class="tabela-wrap"><table id="tInsc"></table></div>
+    </section>
+
+    <section id="resumo" class="aba oculto" style="padding:0"><div class="kpis" id="kpis"></div>
+      <h3 style="margin-top:20px;color:var(--dourado)">Devoluções pendentes (pago fora do prazo)</h3><div class="tabela-wrap"><table id="tDev"></table></div></section>
+
+    <section id="acad" class="aba oculto" style="padding:0">
+      <p class="muted">Junte nomes repetidos da mesma academia antes de publicar a chave (ex.: "GB Manaus" → "Gracie Barra Manaus").</p>
+      <div class="barra"><select id="mDe"></select><span>→ juntar em →</span><select id="mPara"></select><button class="mini verm" id="mesclar">Juntar</button></div>
+      <div class="tabela-wrap"><table id="tAcad"></table></div>
+    </section>
+
+    <section id="cats" class="aba oculto" style="padding:0">
+      <p class="muted">Categorias com inscrições confirmadas. Atleta sozinho: junte com outra categoria ou deixe (ouro por W.O.).</p>
+      <div class="tabela-wrap"><table id="tCats"></table></div>
+    </section>
+
+    <section id="chaves" class="aba oculto" style="padding:0">
+      <div class="grid">
+        <div class="card"><h3>1. Fechar inscrições</h3><p>Bloqueia novas inscrições pelo site. Use em 02/12 à noite (o site já bloqueia sozinho após 23:59).</p><button class="mini verm" data-fase="revisao">Fechar inscrições</button> <button class="mini" data-fase="inscricoes">Reabrir</button></div>
+        <div class="card"><h3>2. Publicar chave final</h3><p>Sorteia todas as chaves, separa academias e distribui nos 2 tatames. Depois disso a chave fica oficial.</p><button class="mini ouro" id="publicar">Publicar chave final</button></div>
+        <div class="card"><h3>3. Dia do evento</h3><p>Liga o modo "ao vivo" no site. Mesários registram resultados.</p><button class="mini verm" data-fase="evento">Iniciar dia do evento</button> <button class="mini" data-fase="encerrado">Encerrar campeonato</button></div>
+      </div>
+      <h3 style="margin-top:22px;color:var(--dourado)">Ajustes após publicar</h3>
+      <div class="barra"><select id="ajCat"></select>
+        <select id="ajTat"><option value="1">Tatame 1</option><option value="2">Tatame 2</option></select>
+        <button class="mini" id="moverTat">Mover de tatame</button>
+        <button class="mini verm" id="ressortear">Ressortear categoria</button></div>
+      <p class="muted">Ressortear só funciona se a categoria ainda não teve luta. Para retirar um atleta, cancele a inscrição na aba Inscrições e o mesário marca W.O.</p>
+      <div id="previaCat"></div>
+    </section>
+  </div>
+</main>
+
+<dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
+<script type="module" src="assets/js/painel.js?v=4"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chaves · III Copa João Leão</title>
+<meta name="theme-color" content="#0b0b0b">
+<link rel="icon" href="assets/img/leao.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tema.css?v=6">
+<style id="cssChave"></style>
+<style>
+  .agora { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin: 14px 0; }
+  .agora .card h3 { margin-bottom: 4px; }
+  .filtros { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin: 12px 0; }
+  details.cat { background: var(--preto2); border: 1px solid var(--linha); border-radius: 10px; margin: 10px 0; }
+  details.cat summary { cursor: pointer; padding: 12px 14px; font-weight: 700; list-style: none; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  details.cat summary::before { content: '▸'; color: var(--vermelho); }
+  details.cat[open] summary::before { content: '▾'; }
+  details.cat .corpo { padding: 0 14px 14px; }
+  .qtd { color: var(--cinza); font-weight: 500; font-size: .85rem; }
+</style>
+</head>
+<body>
+<header class="topo"><div class="wrap">
+  <a href="index.html"><img src="assets/img/brutus-branco.png" alt="Brutus Jiu-Jitsu Clube" width="68" height="30"></a>
+  <nav><a href="index.html">Campeonato</a><a href="inscricao.html">Inscrição</a><a href="chaves.html" aria-current="page">Chaves</a></nav>
+</div></header>
+<main class="wrap" style="padding-bottom:50px">
+  <h1 style="font-style:italic;font-size:2.4rem;margin:22px 0 4px">Chaves</h1>
+  <p id="aviso"></p>
+  <div id="agora" class="agora"></div>
+  <div class="abas" id="abas"><button type="button" data-aba="chaves" aria-pressed="true">Chaves</button><button type="button" data-aba="equipes" aria-pressed="false">Ranking de equipes</button></div>
+  <div id="vChaves">
+    <div class="filtros">
+      <input id="fBusca" placeholder="Buscar atleta">
+      <select id="fMod"><option value="">Gi e No-Gi</option><option value="gi">Gi</option><option value="nogi">No-Gi</option></select>
+      <select id="fSexo"><option value="">Masc. e Fem.</option><option value="M">Masculino</option><option value="F">Feminino</option></select>
+      <select id="fDiv"><option value="">Todas as idades</option></select>
+      <select id="fFaixa"><option value="">Todas as faixas</option></select>
+      <select id="fAcad"><option value="">Todas as academias</option></select>
+    </div>
+    <div id="lista"><p class="muted">Carregando…</p></div>
+  </div>
+  <div id="vEquipes" class="oculto"><div class="tabela-wrap"><table id="tabEquipes"></table></div>
+    <p class="muted">Pontos IBJJF: ouro 9, prata 3, bronze 1. Categoria com 1 atleta não pontua.</p></div>
+</main>
+<script type="module" src="assets/js/chaves.js?v=2"></script>
+</body>
+</html>

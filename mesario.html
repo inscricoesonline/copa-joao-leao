@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mesário · III Copa João Leão</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0b0b">
+<link rel="icon" href="assets/img/leao.webp">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tema.css?v=6">
+<style>
+  .atual { background: var(--preto2); border: 2px solid var(--vermelho); border-radius: 14px; padding: 16px; margin: 14px 0; }
+  .atual .cat { color: var(--dourado); font-weight: 700; }
+  .lado { display: block; width: 100%; text-align: left; background: var(--preto); border: 2px solid var(--linha); color: var(--branco); border-radius: 12px; padding: 16px; margin: 10px 0; font: 600 1.15rem var(--corpo); min-height: 72px; cursor: pointer; }
+  .lado small { display: block; color: var(--cinza); font-weight: 400; font-size: .85rem; }
+  .lado[aria-pressed="true"] { border-color: var(--dourado); background: rgba(242,181,29,.15); }
+  .metodos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+  .metodos button { min-height: 56px; border-radius: 10px; border: 2px solid var(--linha); background: var(--preto3); color: var(--branco); font: 600 1rem var(--corpo); cursor: pointer; }
+  .metodos button[aria-pressed="true"] { border-color: var(--dourado); background: var(--dourado); color: #111; }
+  .proximas li { margin: 6px 0; }
+  .vs { text-align: center; color: var(--cinza); font-weight: 700; }
+</style>
+</head>
+<body>
+<header class="topo"><div class="wrap">
+  <img src="assets/img/brutus-branco.png" alt="Brutus" width="68" height="30">
+  <strong style="font-family:var(--titulo);font-style:italic" id="titulo">MESÁRIO</strong>
+  <nav><a href="#" id="sair" class="oculto">Sair</a></nav>
+</div></header>
+<main class="wrap" style="max-width:560px;padding-bottom:50px">
+  <form id="login" style="margin:40px auto">
+    <h2>Entrar</h2>
+    <label>E-mail</label><input id="lEmail" type="email" autocomplete="username" required>
+    <label>Senha</label><input id="lSenha" type="password" autocomplete="current-password" required>
+    <p class="erro" id="lErro"></p>
+    <button class="btn"><span>Entrar</span></button>
+  </form>
+  <div id="app" class="oculto">
+    <div class="abas oculto" id="escolheTat"><button data-t="1" aria-pressed="true">Tatame 1</button><button data-t="2" aria-pressed="false">Tatame 2</button></div>
+    <div id="atual"></div>
+    <button class="btn fantasma pequeno" id="desfazer" type="button"><span>↶ Desfazer último resultado</span></button>
+    <h3 style="margin-top:22px;color:var(--dourado)">Próximas lutas</h3>
+    <ol class="proximas" id="proximas"></ol>
+  </div>
+</main>
+<script type="module" src="assets/js/mesario.js?v=3"></script>
+</body>
+</html>

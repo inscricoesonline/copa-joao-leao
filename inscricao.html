@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inscrição · III Copa João Leão</title>
+<meta name="theme-color" content="#0b0b0b">
+<link rel="icon" href="assets/img/leao.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tema.css?v=6">
+<style>
+  .passo { background: var(--preto2); border: 1px solid var(--linha); border-radius: 12px; padding: 18px; margin: 16px 0; }
+  .passo > h2 { font-size: 1.5rem; }
+  .num { display: inline-grid; place-items: center; width: 34px; height: 34px; background: var(--vermelho); border-radius: 50%; font-family: var(--titulo); font-style: normal; margin-right: 8px; }
+  .atleta { border: 1px solid var(--linha); border-left: 4px solid var(--dourado); border-radius: 10px; padding: 14px; margin: 12px 0; background: var(--preto); }
+  .atleta header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .atleta header h3 { margin: 0; font-size: 1.2rem; color: var(--dourado); }
+  .rm { background: none; border: 1px solid var(--linha); color: var(--cinza); border-radius: 6px; padding: 6px 10px; cursor: pointer; min-height: 38px; }
+  .mods { display: grid; gap: 8px; margin-top: 8px; }
+  .mod { border: 1px solid var(--linha); border-radius: 8px; padding: 10px 12px; }
+  .mod .pesoSel { margin-top: 6px; }
+  .info-div { font-size: .88rem; color: var(--dourado); margin-top: 6px; min-height: 1.2em; }
+  .resumo li { margin: 4px 0; }
+  .total { font-family: var(--titulo); font-size: 2.2rem; color: var(--dourado); }
+  .termo { max-height: 220px; overflow-y: auto; background: var(--preto); border: 1px solid var(--linha); border-radius: 8px; padding: 12px; font-size: .88rem; color: #ddd; }
+  .pix { text-align: center; }
+  .pix img { width: min(280px, 80vw); margin: 10px auto; background: #fff; padding: 10px; border-radius: 10px; }
+  .copia { word-break: break-all; font-size: .78rem; background: var(--preto); border: 1px dashed #555; border-radius: 8px; padding: 10px; margin: 10px 0; text-align: left; }
+  .sucesso { text-align: center; padding: 30px 10px; }
+  .sucesso .icone { font-size: 4rem; line-height: 1; }
+  datalist { display: none; }
+</style>
+</head>
+<body>
+<header class="topo"><div class="wrap">
+  <a href="index.html"><img src="assets/img/brutus-branco.png" alt="Brutus Jiu-Jitsu Clube" width="68" height="30"></a>
+  <nav><a href="index.html">Campeonato</a><a href="inscricao.html" aria-current="page">Inscrição</a><a href="chaves.html">Chaves</a></nav>
+</div></header>
+
+<main class="wrap" style="max-width:760px;padding-bottom:50px">
+  <h1 style="font-style:italic;font-size:2.4rem;margin-top:22px">Inscrição</h1>
+  <p class="muted">III Copa João Leão · 06/12/2026 · R$ 20 por modalidade (Gi, No-Gi e Absoluto)</p>
+
+  <div id="carregando" class="passo centro">Carregando…</div>
+  <div id="encerradas" class="passo centro oculto"><h2>Inscrições encerradas</h2><p>O prazo terminou em 02/12. Acompanhe as <a href="chaves.html">chaves</a>.</p></div>
+
+  <form id="form" class="oculto" novalidate>
+    <div class="passo">
+      <h2><span class="num">1</span>Quem está inscrevendo</h2>
+      <p class="muted">Pai, mãe ou responsável (para menores) ou o próprio atleta (adultos). Esses dados ficam só com a organização.</p>
+      <label for="rNome">Nome completo</label><input id="rNome" autocomplete="name" required>
+      <div class="linha2">
+        <div><label for="rCpf">CPF</label><input id="rCpf" inputmode="numeric" placeholder="000.000.000-00" required></div>
+        <div><label for="rZap">WhatsApp</label><input id="rZap" inputmode="tel" placeholder="(92) 90000-0000" autocomplete="tel" required></div>
+      </div>
+      <label for="rEmail">E-mail</label><input id="rEmail" type="email" autocomplete="email" required>
+    </div>
+
+    <div class="passo">
+      <h2><span class="num">2</span>Atletas</h2>
+      <div id="atletas"></div>
+      <button type="button" class="btn fantasma pequeno" id="addAtleta"><span>+ Adicionar outro atleta</span></button>
+    </div>
+
+    <div class="passo">
+      <h2><span class="num">3</span>Resumo e termo</h2>
+      <ul class="resumo" id="resumo"></ul>
+      <div>Total: <span class="total" id="total">R$ 0,00</span></div>
+      <h3 style="margin-top:16px;color:var(--dourado);font-size:1.1rem">Termo de Responsabilidade, Uso de Imagem e Dados</h3>
+      <div class="termo" id="termo"></div>
+      <label class="check"><input type="checkbox" id="aceite"> <span>Li e aceito o termo acima, em nome de todos os atletas desta inscrição.</span></label>
+      <div id="erros" class="erros oculto"></div>
+      <p><button class="btn" id="enviar" type="submit"><span>Gerar PIX</span></button></p>
+    </div>
+  </form>
+
+  <div id="pagar" class="passo pix oculto">
+    <h2>Pague com PIX</h2>
+    <p>Valor: <b id="pixValor"></b></p>
+    <img id="pixQr" alt="QR Code PIX">
+    <div class="copia" id="pixCodigo"></div>
+    <button class="btn ouro" id="copiar" type="button"><span>Copiar código PIX</span></button>
+    <p class="muted" id="pixExpira"></p>
+    <p><span class="selo vivo">Aguardando pagamento</span></p>
+    <p class="muted">Esta tela muda sozinha quando o pagamento for confirmado. Pode fechar e voltar depois: guarde este link.</p>
+    <p class="muted" style="word-break:break-all" id="linkPedido"></p>
+  </div>
+
+  <div id="sucesso" class="passo sucesso oculto">
+    <div class="icone">🥋</div>
+    <h2 style="color:var(--verde)">Inscrição confirmada!</h2>
+    <p>Pagamento recebido. Bom campeonato!</p>
+    <ul class="resumo" id="sucLista" style="text-align:left;display:inline-block"></ul>
+    <p><a class="btn" href="chaves.html"><span>Ver as chaves</span></a> <a class="btn fantasma" href="inscricao.html"><span>Nova inscrição</span></a></p>
+  </div>
+
+  <div id="expirado" class="passo centro oculto">
+    <h2>PIX expirado</h2>
+    <p>O prazo de pagamento deste PIX terminou e a vaga não foi confirmada.</p>
+    <p><a class="btn" href="inscricao.html"><span>Fazer nova inscrição</span></a></p>
+  </div>
+</main>
+
+<datalist id="listaAcad"></datalist>
+<script type="module" src="assets/js/inscricao.js?v=2"></script>
+</body>
+</html>
