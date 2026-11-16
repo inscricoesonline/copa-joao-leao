@@ -1,6 +1,7 @@
 import { supa, $, $$, esc, brl } from './supa.js';
 import { FUNCOES, SUPABASE_ANON_KEY, FECHAMENTO } from './config.js?v=3';
 import { NOME_FAIXA } from '../../supabase/functions/_shared/tabelas.js';
+import { cpfValido, dataValida } from '../../supabase/functions/_shared/validacao.js';
 import { divisaoIdade, faixasPermitidas, pesosDisponiveis, podeAbsoluto, validarItens, rotuloCategoria, chaveCategoria, totalPedido } from '../../supabase/functions/_shared/categorias.js';
 
 const BRUTUS = 'Brutus Jiu-Jitsu Clube';
@@ -126,14 +127,14 @@ function validarTudo() {
   const erros = [];
   const r = { nome: $('#rNome').value.trim(), cpf: $('#rCpf').value.replace(/\D/g, ''), whatsapp: $('#rZap').value.replace(/\D/g, ''), email: $('#rEmail').value.trim() };
   if (r.nome.length < 3) erros.push('Informe o nome de quem está inscrevendo.');
-  if (r.cpf.length !== 11) erros.push('CPF deve ter 11 números.');
+  if (!cpfValido(r.cpf)) erros.push('CPF inválido: confira os números.');
   if (r.whatsapp.length < 10) erros.push('WhatsApp com DDD.');
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(r.email)) erros.push('E-mail inválido.');
   const atletas = $$('.atleta').map((el, i) => {
     const a = dadosAtleta(el);
     const e = [];
     if (a.nome.length < 3) e.push('informe o nome completo');
-    if (!a.nascimento) e.push('informe a data de nascimento');
+    if (!dataValida(a.nascimento)) e.push('informe uma data de nascimento válida');
     if (!a.sexo) e.push('informe o sexo');
     if (a.academia.length < 2) e.push('informe a academia');
     if (a.itens.some(it => it.tipo === 'peso' && !it.pesoId)) e.push('escolha a categoria de peso');

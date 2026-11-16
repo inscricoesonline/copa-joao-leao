@@ -1,3 +1,5 @@
+// Não deixa a página ser aberta dentro de outro site (proteção contra clique disfarçado).
+if (top !== self) { document.documentElement.style.display = 'none'; top.location = self.location; }
 import { supa, $, $$, esc, brl } from './supa.js';
 import { chaveHtml, CSS_CHAVE } from './chave-render.js';
 import { NOME_FAIXA, TEMPO_LUTA_MIN } from '../../supabase/functions/_shared/tabelas.js';
