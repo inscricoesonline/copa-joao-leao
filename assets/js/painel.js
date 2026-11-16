@@ -4,6 +4,7 @@ import { NOME_FAIXA, TEMPO_LUTA_MIN } from '../../supabase/functions/_shared/tab
 import { divisaoIdade, faixasPermitidas, pesosDisponiveis, podeAbsoluto, chaveCategoria, parseChave, rotuloCategoria, chaveDuplicidade, normalizarNome, PRECO_ITEM } from '../../supabase/functions/_shared/categorias.js';
 import { gerarChave } from '../../supabase/functions/_shared/chaveamento.js';
 import { ordemCategoria, distribuirTatames, filaTatame } from '../../supabase/functions/_shared/agenda.js';
+import { medalhasNecessarias, numeroDeLutas, taxaConversao } from '../../supabase/functions/_shared/controle.js';
 
 $('#cssChave').textContent = CSS_CHAVE;
 const ST = { pendente: 'Aguardando pagamento', confirmada: 'Confirmada', cancelada: 'Cancelada', pago_fora_prazo: 'Pago fora do prazo' };
@@ -42,12 +43,18 @@ async function carregar() {
     supa.from('categorias').select('*'),
     supa.from('lutas').select('*'),
   ]);
+  const [ped, desp, fun] = await Promise.all([
+    supa.from('pedidos').select('id, status, forma, valor, valor_liquido, expira_em, criado_em, responsaveis(nome, whatsapp), inscricoes(atletas(nome))').limit(5000),
+    supa.from('despesas').select('*').order('criado_em'),
+    supa.from('funil').select('visitante, etapa').limit(20000),
+  ]);
+  D.pedidos = chk(ped); D.despesas = chk(desp); D.funil = chk(fun);
   D.insc = chk(insc); D.acads = chk(acads); D.cats = chk(cats); D.lutas = chk(lutas);
   D.fase = chk(cfg).find(c => c.chave === 'fase')?.valor;
   // pedido pendente vencido = expirado
   for (const i of D.insc) if (i.status === 'pendente' && i.pedidos?.status === 'pendente' && new Date(i.pedidos.expira_em) < new Date()) i._expirado = true;
   $('#faseAtual').innerHTML = `Fase atual: <span class="selo previa">${esc(FASES[D.fase] ?? D.fase)}</span>`;
-  desenharInsc(); desenharResumo(); desenharAcad(); desenharCats(); desenharAjustes();
+  desenharInsc(); desenharResumo(); desenharAcad(); desenharCats(); desenharAjustes(); desenharControle();
 }
 
 // ---------- abas ----------
@@ -375,3 +382,80 @@ $('#ressortear').onclick = async () => {
 };
 
 supa.auth.getSession().then(({ data }) => data.session && iniciar());
+
+// ---------- controle e custos ----------
+const kpi = (t, v, sub = '') => `<div class="kpi">${t}<b>${v}</b>${sub ? `<small class="muted">${sub}</small>` : ''}</div>`;
+const lista = obj => Object.entries(obj).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div style="display:flex;justify-content:space-between;gap:10px"><span>${esc(k)}</span><b>${v}</b></div>`).join('') || '<p class="muted">—</p>';
+
+function desenharControle() {
+  // funil
+  const etapa = e => new Set(D.funil.filter(f => f.etapa === e).map(f => f.visitante)).size;
+  const visitou = etapa('visitou'), comecou = etapa('comecou');
+  const pix = D.pedidos.filter(p => p.forma === 'pix');
+  const gerou = pix.length, pagou = pix.filter(p => ['pago', 'pago_fora_prazo'].includes(p.status)).length;
+  const desist = pix.filter(p => ['pendente', 'expirado'].includes(p.status));
+  $('#kFunil').innerHTML = kpi('Abriram a inscrição', visitou) + kpi('Começaram a preencher', comecou, `${taxaConversao(comecou, visitou)}% de quem abriu`) +
+    kpi('Chegaram no PIX', gerou, `${taxaConversao(gerou, comecou)}% de quem começou`) + kpi('Pagaram', pagou, `${taxaConversao(pagou, gerou)}% de quem chegou no PIX`) +
+    kpi('Desistiram no PIX', desist.length, `${taxaConversao(desist.length, gerou)}% de quem chegou no PIX`);
+  $('#tDesist').innerHTML = '<tr><th>Responsável</th><th>WhatsApp</th><th>Atletas</th><th>Valor</th><th>Situação</th></tr>' + (desist.length ? desist.map(p => {
+    const vencido = new Date(p.expira_em) < new Date();
+    const zap = (p.responsaveis?.whatsapp ?? '').replace(/\D/g, '');
+    return `<tr><td>${esc(p.responsaveis?.nome)}</td><td>${zap ? `<a href="https://wa.me/55${esc(zap)}" target="_blank" rel="noopener">${esc(p.responsaveis?.whatsapp)}</a>` : ''}</td>
+      <td style="white-space:normal">${esc([...new Set((p.inscricoes ?? []).map(i => i.atletas?.nome))].join(', '))}</td><td>${brl(p.valor)}</td><td>${vencido ? 'PIX expirado' : 'Aguardando'}</td></tr>`;
+  }).join('') : '<tr><td colspan="5" class="muted">Ninguém por enquanto.</td></tr>');
+
+  // financeiro
+  const pagos = pix.filter(p => p.status === 'pago');
+  const bruto = pagos.reduce((s, p) => s + Number(p.valor), 0);
+  const liquido = pagos.reduce((s, p) => s + Number(p.valor_liquido ?? p.valor), 0);
+  const conf = D.insc.filter(i => i.status === 'confirmada');
+  const dinheiro = conf.filter(i => i.forma === 'dinheiro').reduce((s, i) => s + Number(i.valor), 0);
+  const abonados = conf.filter(i => i.forma === 'abonado').length;
+  const devolver = D.insc.filter(i => i.status === 'pago_fora_prazo').reduce((s, i) => s + Number(i.valor), 0);
+  const despTotal = D.despesas.reduce((s, d) => s + Number(d.valor), 0);
+  const despPagas = D.despesas.filter(d => d.pago).reduce((s, d) => s + Number(d.valor), 0);
+  const saldo = liquido + dinheiro - despTotal - devolver;
+  $('#kFin').innerHTML = kpi('PIX recebido (bruto)', brl(bruto)) + kpi('Taxas do Asaas', brl(bruto - liquido)) + kpi('PIX líquido', brl(liquido)) +
+    kpi('Dinheiro', brl(dinheiro)) + kpi('Abonados', abonados, `deixaram de entrar ${brl(abonados * PRECO_ITEM)}`) + kpi('A devolver', brl(devolver)) +
+    kpi('Despesas', brl(despTotal), `${brl(despPagas)} já pagas`) +
+    kpi('Saldo previsto', `<span style="color:${saldo >= 0 ? 'var(--verde)' : '#ff6b6b'}">${brl(saldo)}</span>`, 'líquido + dinheiro − despesas − devoluções');
+  $('#tDesp').innerHTML = '<tr><th>Descrição</th><th>Categoria</th><th>Valor</th><th>Situação</th><th></th></tr>' + (D.despesas.length ? D.despesas.map(d =>
+    `<tr><td>${esc(d.descricao)}</td><td>${esc(d.categoria)}</td><td>${brl(d.valor)}</td><td><button class="mini" data-dpago="${d.id}">${d.pago ? 'Pago ✓' : 'A pagar'}</button></td><td><button class="mini" data-ddel="${d.id}">Excluir</button></td></tr>`).join('')
+    : '<tr><td colspan="5" class="muted">Nenhuma despesa lançada.</td></tr>');
+
+  // evento
+  const porCat = {};
+  for (const i of conf) porCat[i.categoria] = (porCat[i.categoria] ?? 0) + 1;
+  const tamanhos = Object.values(porCat);
+  const med = medalhasNecessarias(tamanhos);
+  let minutos = 0;
+  for (const [k, n] of Object.entries(porCat)) { const c = parseChave(k); minutos += numeroDeLutas(n) * (TEMPO_LUTA_MIN(c.divisaoId, c.faixa) + 2); }
+  const horas = minutos / 2 / 60;
+  $('#kEvento').innerHTML = kpi('Atletas', new Set(conf.map(i => i.atleta_id)).size) +
+    kpi('Categorias', tamanhos.length, `${tamanhos.filter(n => n === 1).length} com atleta sozinho`) +
+    kpi('Medalhas', med.total, `${med.ouro} ouro, ${med.prata} prata, ${med.bronze} bronze`) +
+    kpi('Lutas previstas', tamanhos.reduce((s, n) => s + numeroDeLutas(n), 0)) +
+    kpi('Duração estimada', `${Math.floor(horas)}h${String(Math.round((horas % 1) * 60)).padStart(2, '0')}`, '2 tatames, 2 min entre lutas');
+  const grupo = c => { const d = parseChave(c).divisaoId; return d.startsWith('master') ? 'Master' : d === 'adulto' ? 'Adulto' : d.startsWith('juvenil') ? 'Juvenil' : 'Kids'; };
+  const cont = f => { const o = {}; for (const i of conf) { const k = f(i); o[k] = (o[k] ?? 0) + 1; } return o; };
+  $('#lIdade').innerHTML = lista(cont(i => grupo(i.categoria)));
+  $('#lMod').innerHTML = lista(cont(i => { const c = parseChave(i.categoria); return (c.modalidade === 'gi' ? 'Gi' : 'No-Gi') + (c.tipo === 'absoluto' ? ' (Absoluto)' : ''); }));
+  $('#lAcad').innerHTML = lista(cont(i => i.atletas?.academias?.nome ?? '?'));
+}
+
+$('#fDesp').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target;
+  try {
+    chk(await supa.from('despesas').insert({ descricao: f.desc.value.trim(), categoria: f.cat.value, valor: Number(f.valor.value), pago: f.pago.checked }));
+    f.reset(); await carregar();
+  } catch (er) { erro(er); }
+});
+$('#tDesp').onclick = async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  try {
+    if (b.dataset.dpago) { const d = D.despesas.find(x => x.id === b.dataset.dpago); chk(await supa.from('despesas').update({ pago: !d.pago }).eq('id', d.id)); }
+    if (b.dataset.ddel && confirm('Excluir esta despesa?')) chk(await supa.from('despesas').delete().eq('id', b.dataset.ddel));
+    await carregar();
+  } catch (er) { erro(er); }
+};

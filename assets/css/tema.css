@@ -163,3 +163,4 @@ h3 { text-transform: none; font-family: var(--corpo); font-weight: 700; letter-s
 .convite p { color: var(--cinza); font-size: .82rem; max-width: 52ch; margin: 0; }
 .convite p a { color: var(--branco); }
 footer { padding-bottom: 22px; }
+.kpi small { display: block; margin-top: 4px; }

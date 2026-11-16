@@ -211,6 +211,13 @@ function acompanhar(id) {
   }, 5000);
 }
 
+// ---------- funil (anônimo: só um código aleatório do navegador, nenhum dado pessoal) ----------
+let visitante = null;
+try { visitante = localStorage.getItem('copa_v') || (crypto.randomUUID?.() ?? String(Math.random()).slice(2)).replace(/[^A-Za-z0-9_-]/g, '').slice(0, 32); localStorage.setItem('copa_v', visitante); } catch { visitante = String(Math.random()).slice(2, 20); }
+const marcar = etapa => supa.rpc('registrar_funil', { p_visitante: visitante, p_etapa: etapa }).then(() => {}, () => {});
+let comecou = false;
+$('#form').addEventListener('input', () => { if (!comecou) { comecou = true; marcar('comecou'); } });
+
 // ---------- início ----------
 async function iniciar() {
   $('#termo').innerHTML = TERMO;
@@ -223,6 +230,7 @@ async function iniciar() {
   if ((data && data.fase !== 'inscricoes') || new Date() > FECHAMENTO) { mostrar('encerradas'); return; }
   const { data: acs } = await supa.from('v_academias').select('nome');
   $('#listaAcad').innerHTML = (acs ?? []).filter(a => a.nome !== BRUTUS).map(a => `<option value="${esc(a.nome)}">`).join('');
+  marcar('visitou');
   novoAtleta();
   $('#addAtleta').onclick = () => { if ($$('.atleta').length >= 10) return alert('Máximo de 10 atletas por inscrição.'); novoAtleta(); };
   mostrar('form');
