@@ -9,20 +9,20 @@
 <meta property="og:description" content="Gi e No-Gi · 06/12/2026 · Nova Olinda do Norte/AM · Inscrições abertas">
 <meta property="og:image" content="assets/img/cartaz.jpg">
 <meta name="theme-color" content="#0b0b0b">
-<link rel="icon" href="assets/img/leao.webp">
+<link rel="icon" href="assets/img/leao.webp?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tema.css?v=6">
+<link rel="stylesheet" href="assets/css/tema.css?v=15">
 </head>
 <body>
 <header class="topo"><div class="wrap">
-  <a href="index.html"><img src="assets/img/brutus-branco.png" alt="Brutus Jiu-Jitsu Clube" width="68" height="30"></a>
+  <a href="index.html" class="marca-topo"><img src="assets/img/brutus-branco.png" alt="Brutus Jiu-Jitsu Clube" width="68" height="30"><span>apresenta</span></a>
   <nav><a href="index.html" aria-current="page">Campeonato</a><a href="inscricao.html">Inscrição</a><a href="chaves.html">Chaves</a></nav>
 </div></header>
 
 <main>
 <section class="hero"><div class="wrap">
-  <img class="leao" src="assets/img/leao.webp" alt="Emblema João Leão" width="240" height="240">
+  <img class="leao" src="assets/img/leao.webp?v=2" alt="Emblema João Leão" width="240" height="240">
   <p class="edicao">III Copa</p>
   <h1>João Leão</h1>
   <p class="sub">de Jiu-Jitsu</p>
@@ -81,8 +81,14 @@
 </div></section>
 
 <section><div class="wrap centro">
-  <h2>Realização</h2>
-  <div class="apoio" style="margin-bottom:26px"><figure class="escuro" style="width:200px"><img src="assets/img/brutus-branco.png" alt="Brutus Jiu-Jitsu Clube"></figure></div>
+  <div class="realizacao">
+    <img src="assets/img/brutus-branco.png" alt="Brutus Jiu-Jitsu Clube" width="300" height="133">
+    <div>
+      <h2>Realização</h2>
+      <p>A Brutus Jiu-Jitsu Clube, de Nova Olinda do Norte, realiza a III Copa João Leão e recebe atletas de todas as equipes.</p>
+      <p class="lema">Jiu-jitsu é disciplina, respeito e superação.</p>
+    </div>
+  </div>
   <h2>Apoio e patrocínio</h2>
   <div class="apoio">
     <figure><img src="assets/img/lotus.png" alt="Instituto Lótus" loading="lazy"></figure>
@@ -101,6 +107,10 @@
   <p>III Copa João Leão de Jiu-Jitsu · Realização Brutus Jiu-Jitsu Clube · Nova Olinda do Norte – AM</p>
   <p id="contato"></p>
 </div></footer>
+<aside class="convite"><div class="wrap">
+  <a href="https://institutolotus.com/contato" target="_blank" rel="noopener"><img src="assets/img/lotus-branco.png" alt="Instituto Lótus" width="120" height="58"></a>
+  <p>Site desenvolvido pelo Instituto Lótus. Quer um sistema assim para o seu evento? <a href="https://institutolotus.com/contato" target="_blank" rel="noopener">Fale com a gente</a>.</p>
+</div></aside>
 
 <script type="module">
 import { DIVISOES_IDADE, NOME_FAIXA, FAIXAS_POR_DIVISAO, TEMPO_LUTA_MIN } from './supabase/functions/_shared/tabelas.js';
