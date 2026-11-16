@@ -1,5 +1,5 @@
 import { supa, $, $$, esc, brl } from './supa.js';
-import { FUNCOES, SUPABASE_ANON_KEY, FECHAMENTO } from './config.js';
+import { FUNCOES, SUPABASE_ANON_KEY, FECHAMENTO } from './config.js?v=3';
 import { NOME_FAIXA } from '../../supabase/functions/_shared/tabelas.js';
 import { divisaoIdade, faixasPermitidas, pesosDisponiveis, podeAbsoluto, validarItens, rotuloCategoria, chaveCategoria, totalPedido } from '../../supabase/functions/_shared/categorias.js';
 
@@ -196,6 +196,8 @@ function exibirStatus(d) {
     $('#sucesso h2').style.color = fora ? 'var(--dourado)' : 'var(--verde)';
     $('#sucesso p').textContent = fora ? 'A chave já estava fechada. A organização vai entrar em contato para a devolução.' : 'Pagamento recebido. Bom campeonato!';
     $('#sucLista').innerHTML = d.inscricoes.map(i => `<li><b>${esc(i.nome)}</b> — ${esc(i.categoria)}${i.status === 'pago_fora_prazo' ? ' <span class="selo">devolução</span>' : ''}</li>`).join('');
+    if (d.grupoWhatsapp) $('#grupoLink').href = d.grupoWhatsapp;
+    $('#grupoZap').classList.toggle('oculto', fora || !d.grupoWhatsapp);
     mostrar('sucesso');
     return true;
   }

@@ -29,6 +29,10 @@
   .copia { word-break: break-all; font-size: .78rem; background: var(--preto); border: 1px dashed #555; border-radius: 8px; padding: 10px; margin: 10px 0; text-align: left; }
   .sucesso { text-align: center; padding: 30px 10px; }
   .sucesso .icone { font-size: 4rem; line-height: 1; }
+  .grupo-zap { background: rgba(37,211,102,.08); border: 1px solid #25d366; border-radius: 10px; padding: 16px; margin: 18px auto; max-width: 440px; }
+  .grupo-zap p { margin: 0 0 12px; }
+  .btn.zap { background: #25d366; color: #0b0b0b; }
+  .btn.zap:hover { background: #1ebe5b; }
   datalist { display: none; }
 </style>
 </head>
@@ -93,6 +97,10 @@
     <h2 style="color:var(--verde)">Inscrição confirmada!</h2>
     <p>Pagamento recebido. Bom campeonato!</p>
     <ul class="resumo" id="sucLista" style="text-align:left;display:inline-block"></ul>
+    <div class="grupo-zap" id="grupoZap">
+      <p><b>Entre no grupo do WhatsApp do campeonato</b><br><span class="muted">Local, horários e avisos importantes chegam por lá.</span></p>
+      <a class="btn zap" id="grupoLink" href="#" target="_blank" rel="noopener"><span>Entrar no grupo do WhatsApp</span></a>
+    </div>
     <p><a class="btn" href="chaves.html"><span>Ver as chaves</span></a> <a class="btn fantasma" href="inscricao.html"><span>Nova inscrição</span></a></p>
   </div>
 
@@ -108,6 +116,6 @@
   <a href="https://institutolotus.com/contato" target="_blank" rel="noopener"><img src="assets/img/lotus-branco.png" alt="Instituto Lótus" width="120" height="58"></a>
   <p>Site desenvolvido pelo Instituto Lótus. Quer um sistema assim para o seu evento? <a href="https://institutolotus.com/contato" target="_blank" rel="noopener">Fale com a gente</a>.</p>
 </div></aside>
-<script type="module" src="assets/js/inscricao.js?v=2"></script>
+<script type="module" src="assets/js/inscricao.js?v=4"></script>
 </body>
 </html>
